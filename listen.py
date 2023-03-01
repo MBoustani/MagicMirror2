@@ -1,11 +1,14 @@
 
 import speech_recognition as sr
 
-wake_up_word = "mazi"
+wake_up_word = "master"
 
-DEVICE_INDEX = 1
+for i, name in enumerate(sr.Microphone.list_microphone_names()):
+    print(i, name)
 
-microphone = sr.Microphone()
+DEVICE_INDEX = 0
+
+microphone = sr.Microphone(device_index=DEVICE_INDEX)
 recognizer = sr.Recognizer()
 
 

@@ -29,7 +29,7 @@ import requests as reqs
 
 import tasks
 import listen
-import face_detect
+#import face_detect
 import speak
 
 
