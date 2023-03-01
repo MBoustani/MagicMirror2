@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <link rel="stylesheet" href="{{ url_for('static', path='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/main.css') }}">
+
+    <script src="{{ url_for('static', path='js/jquery-3.4.1.min.js') }}" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', path='js/bootstrap.min.js') }}" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', path='js/main.js') }}" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', path='js/luxon.js') }}" crossorigin="anonymous"></script>
+
+</head>
+
+    <body class="text-bg-dark p-3">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-8">
+            <span style="font-size: 300px; line-height: 0.7em" id='clock'></span><span id='second'></span>
+            <br>
+            <span id='date' style="font-size: 50px; font-weight: 100;"></span>
+          </div>
+          <div class="col-4">
+            <span id="weather" style="float: right;"></span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <span id="stocks" style="float: right;"></span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <span id="crypto" style="float: right;"></span>
+          </div>
+        </div>
+      </div>
+
+      
+      
+      <div id='messages' style="position: fixed; bottom: 10px; width: 100%; text-align: center; justify-content:center; display: flex;"></div>
+
+      
+      
+
+      <script>
+        days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        var DateTime = luxon.DateTime;
+        function time() {
+          const now = DateTime.now().setZone("{{time_zone}}");
+          var sec = now.second;
+          var min = now.minute;
+          var hr = now.hour;
+          document.getElementById('clock').innerHTML = hr + ":" + min;
+          document.getElementById('second').innerHTML = sec;
+
+          var day = now.day;
+          var month = now.month;
+          var year = now.year;
+          var weekday = now.weekday;
+          document.getElementById('date').innerHTML = days[weekday] + " " + month + "/" + day + "/" + year
+        }
+        setInterval(time, 1000);
+
+        function update_weather() {
+          $.ajax({
+            type: 'POST',
+            contentType: 'application/json',
+            url: '/update_weather',
+            success: function (data) {
+              data = data['daily_min_max_rain'];
+              document.getElementById('weather').innerHTML = "";
+              for (let i = 0; i < data.length; i++) {
+                document.getElementById('weather').innerHTML += '<span>' + data[i][0] +' 	&nbsp;	&nbsp;  ' + data[i][1]+ '-' +data[i][2] + '&nbsp; '+ data[i][3]+'</span><br>'
+              }
+            }
+          });
+        }
+        setInterval(update_weather, 9000000); // every 2.5 hours
+
+        function update_stock() {
+          $.ajax({
+            type: 'POST',
+            contentType: 'application/json',
+            url: '/update_stock_price',
+            success: function (data) {
+              data = data['stock_prices'];
+              if (data.length > 0) {
+                document.getElementById('stocks').innerHTML = '<h1>Stocks</h1>'
+                for (let i = 0; i < data.length; i++) {
+                 document.getElementById('stocks').innerHTML += '<span>'+ data[i][0] +'&nbsp;' + '$' + data[i][1] + '</span><br>'
+              }
+              }
+            }
+          });
+        }
+        setInterval(update_stock, 60000); // every 1 min
+
+
+        function update_crypto() {
+          $.ajax({
+            type: 'POST',
+            contentType: 'application/json',
+            url: '/update_crypto_price',
+            success: function (data) {
+              data = data['crypto_prices'];
+              if (data.length > 0) {
+                document.getElementById('crypto').innerHTML = '<h1>Crypto</h1>'
+                for (let i = 0; i < data.length; i++) {
+                  document.getElementById('crypto').innerHTML += '<span>'+ data[i][0] +'&nbsp;' + '$' + data[i][1] + '</span><br>'
+              }
+              }
+            }
+          });
+        }
+        setInterval(update_crypto, 60000); // every 1 min
+ 
+        update_weather()
+        update_stock()
+        update_crypto()
+        
+        var ws = new WebSocket("ws://localhost:8000/ws");
+            ws.onmessage = function(event) {
+              document.getElementById('messages').innerHTML = "<div class='loader'></div>";
+              if (event.data !== 'null'){
+                message = JSON.parse(event.data)
+                
+                if (message['content'] == 'show_spinning_icon'){
+                  document.getElementById('messages').innerHTML = "<div class='loader'></div>";
+                }
+                else{
+                document.getElementById('messages').innerHTML = "<p>" + message['content']['speaker'] + ": " + message['content']['content'] + "</p>";
+                }
+              };
+          }
+           
+
+      </script>
+    </body>
+
+</html>

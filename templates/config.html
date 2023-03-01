@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> 
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <link rel="stylesheet" href="{{ url_for('static', path='css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', path='css/main.css') }}">
+ 
+        <script src="{{ url_for('static', path='js/jquery-3.4.1.min.js') }}" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', path='js/bootstrap.min.js') }}" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', path='js/main.js') }}" crossorigin="anonymous"></script>
+    
+    </head>
+
+    <body class="text-bg-dark p-3">
+      <h1 class="display-2">Configuration page</h1>
+      <div class="container-fluid">
+        <form>
+          <div class="mb-3">
+            <label for="zipCodeInput" class="form-label">Zip Code</label>
+            <input type="text" class="form-control" id="zipCodeInput" placeholder="Enter your zip code">
+          </div>
+
+          <hr class="hr" />
+
+          <div class="mb-3">
+            <label for="stockTickersInput" class="form-label">Stock Tickers (up to 5 items)</label>
+            <p>Separate with comma</p>
+            <input type="text" class="form-control" id="stockTickersInput" placeholder="Enter stock tickers">
+          </div>
+
+          <hr class="hr" />
+
+          <div class="mb-3">
+            <label for="cryptoTickersInput" class="form-label">Crypto Tickers (up to 5 items)</label>
+            <p>Separate with comma</p>
+            <input type="text" class="form-control" id="cryptoTickersInput" placeholder="Enter crypto tickers">
+          </div>
+
+          <hr class="hr" />
+
+          <div class="mb-3">
+            <label for="openai_api_key" class="form-label">OpenAI API Key</label>
+            <input type="text" class="form-control" id="openai_api_key" placeholder="Enter OpenAI API Key here">
+          </div>
+          
+          <button type="button" class="btn btn-primary"  onclick="save_config()">Save</button>
+          <p id="saved_notice"></p>
+        </form>
+      </div>
+  
+
+    </body>
+
+    <script>
+      {% if config_data['zip_code'] %}
+        document.getElementById('zipCodeInput').value = "{{config_data['zip_code']}}"
+      {% endif %}
+      {% if config_data['stock_tickers'] %}
+        document.getElementById('stockTickersInput').value = "{{config_data['stock_tickers']|safe}}"
+      {% endif %}
+      {% if config_data['crypto_tickers'] %}
+        document.getElementById('cryptoTickersInput').value = "{{config_data['crypto_tickers']|safe}}"
+      {% endif %}
+      {% if config_data['openai_api_key'] %}
+        document.getElementById('openai_api_key').value = "{{config_data['openai_api_key']|safe}}"
+      {% endif %}
+
+      function save_config() {
+        $.ajax({
+            data: JSON.stringify({
+                zip_code : document.getElementById('zipCodeInput').value,
+                stock_tickers: document.getElementById('stockTickersInput').value,
+                crypto_tickers: document.getElementById('cryptoTickersInput').value,
+                openai_api_key: document.getElementById('openai_api_key').value
+            }),
+            type: 'POST',
+            contentType: 'application/json',
+            url: '/save_config',
+            success: function (data) {
+                document.getElementById('saved_notice').innerHTML = "Changes saved."
+            }
+        });
+      }
+
+    </script>
+
+</html>
