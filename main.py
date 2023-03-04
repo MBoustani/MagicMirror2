@@ -54,13 +54,12 @@ def person_detection():
 
 def wake_up_call():
     while True:
-        print("Speak")
-        if listen.take_command(2, True) == "wake_up_call":
+        if listen.wake_up_call(True) == "wake_up_call":
             reqs.post(show_spinning_icon)
             speak.say("How can I help you.")
             reqs.post(update_command_url + 'Marvin' + '/' + "How can I help you?")
             reqs.post(show_spinning_icon)
-            command = listen.take_command(8, False)
+            command = listen.take_command(False)
             print('command', command)
             reqs.post(update_command_url + 'You' + '/' + command)
             if command:

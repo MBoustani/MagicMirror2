@@ -1,16 +1,45 @@
+import os
+
+from pocketsphinx import LiveSpeech, get_model_path
 
 import speech_recognition as sr
 
-wake_up_word = "master"
 
 for i, name in enumerate(sr.Microphone.list_microphone_names()):
     print(i, name)
 
-DEVICE_INDEX = 0
+DEVICE_INDEX = 1
 
 microphone = sr.Microphone(device_index=DEVICE_INDEX)
 recognizer = sr.Recognizer()
 
+
+def wake_up_call(wake_up=False, timeout=5):
+    while True:
+        # set up the pocketsphinx decoder
+        model_path = get_model_path()
+        speech = LiveSpeech(
+            verbose=False,
+            sampling_rate=16000,
+            buffer_size=248,
+            no_search=False,
+            full_utt=False
+        )
+
+        print("Listening...")
+
+        # listen for the wake-up phrase
+        for phrase in speech:
+            text = str(phrase).lower()
+            print("Detected phrase:", text)
+            
+            # check if the wake-up phrase is present in the detected text
+            if "marvin" in text or "martin" in text or "marlene" in text or "more read" in text:
+                return "wake_up_call"
+            # exit the loop if timeout is reached
+            if phrase.segments(detailed=True)[-1][2] >= timeout:
+                print("Timeout reached. Exiting...")
+                break
 
 def take_command(phrase_time_limit, wake_up=False):
     while True:
@@ -23,11 +52,6 @@ def take_command(phrase_time_limit, wake_up=False):
             # Use the speech recognition library to convert the voice input to text
             voice_input = recognizer.recognize_google(audio)
             print(f"Voice input: {voice_input}")
-            if wake_up:
-                # Check if the wake-up word is in the voice input
-                if wake_up_word in voice_input.lower():
-                    print("Wake-up word detected!")
-                    return "wake_up_call"
             return voice_input
 
         except sr.UnknownValueError:
@@ -35,13 +59,3 @@ def take_command(phrase_time_limit, wake_up=False):
         except sr.RequestError as e:
             print(f"Could not request results from Google Speech Recognition service; {e}")
 
-
-
-    # with sr.Microphone(device_index=device_index) as source:
-    #     query = ""
-    #     try:
-    #         audio = recognizer.listen(source, phrase_time_limit=phrase_time_limit,timeout=8)
-    #         query = recognizer.recognize_google(audio, language="en-US")
-    #     except:
-    #         pass
-    # return query.lower()
