@@ -13,6 +13,7 @@
     <script src="{{ url_for('static', path='js/bootstrap.min.js') }}" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', path='js/main.js') }}" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', path='js/luxon.js') }}" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', path='js/jquery.rss.js') }}" crossorigin="anonymous"></script>
 
 </head>
 
@@ -39,6 +40,14 @@
           </div>
         </div>
       </div>
+
+      <div id="rss-feeds"></div>
+        <div id="news">
+          <span id="cnet">CNET</span>
+          <div id="cnet_rss_feeds"></div>
+          <span id="cnn">CNN</span>
+          <div id="cnn_rss_feeds"></div>
+        </div>
 
       
       
@@ -139,6 +148,40 @@
           }
            
 
+          
+            function cnet_news(){ jQuery(function($) {
+              $("#cnet_rss_feeds").empty();
+              $("#cnet_rss_feeds")
+                .hide()
+                .rss("https://www.cnet.com/rss/news/", {
+                  limit: 7,
+                  entryTemplate: '- <span id="news_title">{title}</span><br><br>'
+                }, function() {
+                  $("#cnet_rss_feeds")
+                    .show()
+                    .find('> div')
+                })
+            })}
+
+          setInterval(cnet_news, 60000);
+          cnet_news()
+
+          function cnn_news(){ jQuery(function($) {
+            $("#cnn_rss_feeds").empty();
+            $("#cnn_rss_feeds")
+              .hide()
+              .rss("http://rss.cnn.com/rss/edition.rss", {
+                limit: 7,
+                entryTemplate: '- <span id="news_title">{title}</span><br><br>'
+              }, function() {
+                $("#cnn_rss_feeds")
+                  .show()
+                  .find('> div')
+              })
+          })}
+
+          setInterval(cnn_news, 60000);
+          cnn_news()
       </script>
     </body>
 
