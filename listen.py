@@ -46,9 +46,8 @@ def take_command(phrase_time_limit, wake_up=False):
         print('listening .....')
         with microphone as source:
             recognizer.adjust_for_ambient_noise(source)
-            audio = recognizer.listen(source, phrase_time_limit=phrase_time_limit,timeout=8)
-
         try:
+            audio = recognizer.listen(source, phrase_time_limit=phrase_time_limit,timeout=8)
             # Use the speech recognition library to convert the voice input to text
             voice_input = recognizer.recognize_google(audio)
             print(f"Voice input: {voice_input}")
