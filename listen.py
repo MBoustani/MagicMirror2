@@ -8,7 +8,7 @@ import speech_recognition as sr
 for i, name in enumerate(sr.Microphone.list_microphone_names()):
     print(i, name)
 
-DEVICE_INDEX = 1
+DEVICE_INDEX = 0
 
 microphone = sr.Microphone(device_index=DEVICE_INDEX)
 recognizer = sr.Recognizer()
@@ -45,9 +45,13 @@ def take_command(phrase_time_limit, wake_up=False):
     while True:
         print('listening .....')
         with microphone as source:
-            recognizer.adjust_for_ambient_noise(source)
+            try:
+                recognizer.adjust_for_ambient_noise(source)
+                audio = recognizer.listen(source, phrase_time_limit=phrase_time_limit,timeout=8)
+            except:
+                print("Could not understand audio")    
         try:
-            audio = recognizer.listen(source, phrase_time_limit=phrase_time_limit,timeout=8)
+            
             # Use the speech recognition library to convert the voice input to text
             voice_input = recognizer.recognize_google(audio)
             print(f"Voice input: {voice_input}")
