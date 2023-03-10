@@ -45,11 +45,8 @@ def take_command(wake_up=False):
     while True:
         print('listening .....')
         with microphone as source:
-            try:
-                recognizer.adjust_for_ambient_noise(source)
-                audio = recognizer.listen(source,timeout=8)
-            except:
-                return "someting went wrong"
+            recognizer.adjust_for_ambient_noise(source)
+            audio = recognizer.listen(source,timeout=8)
         try:
             
             # Use the speech recognition library to convert the voice input to text
