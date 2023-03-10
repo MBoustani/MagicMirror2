@@ -34,7 +34,7 @@ def wake_up_call(wake_up=False, timeout=5):
             print("Detected phrase:", text)
             
             # check if the wake-up phrase is present in the detected text
-            if "marvin" in text or "martin" in text or "marlene" in text or "more read" in text:
+            if "okay" in text:
                 return "wake_up_call"
             # exit the loop if timeout is reached
             if phrase.segments(detailed=True)[-1][2] >= timeout:
@@ -45,11 +45,8 @@ def take_command(phrase_time_limit, wake_up=False):
     while True:
         print('listening .....')
         with microphone as source:
-            try:
-                recognizer.adjust_for_ambient_noise(source)
-                audio = recognizer.listen(source, phrase_time_limit=phrase_time_limit,timeout=8)
-            except:
-                print("Could not understand audio")    
+            recognizer.adjust_for_ambient_noise(source)
+            audio = recognizer.listen(source, phrase_time_limit=phrase_time_limit,timeout=8)
         try:
             
             # Use the speech recognition library to convert the voice input to text
