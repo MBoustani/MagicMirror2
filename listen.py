@@ -41,12 +41,12 @@ def wake_up_call(wake_up=False, timeout=5):
                 print("Timeout reached. Exiting...")
                 break
 
-def take_command(phrase_time_limit, wake_up=False):
+def take_command(wake_up=False):
     while True:
         print('listening .....')
         with microphone as source:
             recognizer.adjust_for_ambient_noise(source)
-            audio = recognizer.listen(source, phrase_time_limit=phrase_time_limit,timeout=8)
+            audio = recognizer.listen(source,timeout=8)
         try:
             
             # Use the speech recognition library to convert the voice input to text
