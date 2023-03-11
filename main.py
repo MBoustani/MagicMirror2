@@ -27,6 +27,7 @@ import threading
 import multiprocessing
 from multiprocessing import pool
 import requests as reqs
+import time
 
 import tasks
 import listen
@@ -61,6 +62,7 @@ def wake_up_call():
         if listen.wake_up_call(True) == "wake_up_call":
             reqs.post(show_spinning_icon)
             speak.say("How can I help you.")
+            time.sleep(1)
             reqs.post(update_command_url + 'Marvin' + '/' + "How can I help you?")
             reqs.post(show_spinning_icon)
             command = listen.take_command(False)
