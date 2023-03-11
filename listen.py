@@ -34,7 +34,7 @@ def wake_up_call(wake_up=False, timeout=5):
             print("Detected phrase:", text)
             
             # check if the wake-up phrase is present in the detected text
-            if "hey" in text:
+            if "hey" in text or text == 'a':
                 return "wake_up_call"
             # exit the loop if timeout is reached
             if phrase.segments(detailed=True)[-1][2] >= timeout:
