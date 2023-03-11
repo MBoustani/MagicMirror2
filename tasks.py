@@ -83,15 +83,16 @@ def task_detector(command):
     Who is Barak Obama --> wikipedia("Barak Obama")
     """
     outputs = []
-    # prompt = gpt.detect_task_prompt.format(user_input=command)
-    # gpt_output = gpt.run_gpt(prompt)
-    # if gpt_output:
-    #     gpt_output = gpt_output.lower()
-    #     if "date" in gpt_output or "time" in gpt_output:
-    #         outputs += date_time(command)
-    #     elif "weather" in gpt_output or "temperature" in gpt_output:
-    #         outputs += weather(command)
-    #     else:
-    #         outputs += ['ask gpt']
+    prompt = gpt.detect_task_prompt.format(user_input=command)
+    gpt_output = gpt.run_gpt(prompt)
+    if gpt_output:
+        gpt_output = gpt_output.lower()
+        if "date" in gpt_output or "time" in gpt_output:
+            outputs += date_time(command)
+        elif "weather" in gpt_output or "temperature" in gpt_output:
+            outputs += weather(command)
+        else:
+            prompt = gpt.answer_question.format(user_input=command)
+            outputs += [gpt.run_gpt(prompt)]
 
-    return ['ok'] #outputs
+    return outputs

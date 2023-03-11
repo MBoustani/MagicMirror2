@@ -2,10 +2,7 @@
 import openai
 import os
 
-API_KEY = ""
-os.environ["OPENAI_API_KEY"] = API_KEY
-openai.api_key = API_KEY
-
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 def run_gpt(query):
   
@@ -54,4 +51,12 @@ Output:'other'
 #
 Input: {user_input}
 Output:
+"""
+
+
+answer_question = """
+Answer the question, be very short and use simple words:
+
+Question: {user_input}
+Answer:
 """

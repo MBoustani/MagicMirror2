@@ -18,6 +18,7 @@ from pyzipcode import ZipCodeDatabase
 from timezonefinder import TimezoneFinder
 #import yfinance as yf
 
+import os
 import datetime
 import urllib.request
 import json
@@ -48,6 +49,9 @@ update_command_url  = "http://localhost:8000/update_command/"
 empty_command_url  = "http://localhost:8000/empty_command/"
 marvin_command = None # Format {'speaker': 'bot', 'content': 'test'} Marvin or You, make it None for not showing it
 
+f = open('config.json')
+config_data = json.load(f)
+os.environ['OPENAI_API_KEY'] = config_data['openai_api_key']
 
 def person_detection():
     face_detect.detect_face()
@@ -65,8 +69,8 @@ def wake_up_call():
             if command:
                 responses = tasks.task_detector(command)
                 for respons in responses:
-                    reqs.post(update_command_url + 'Marvin' + '/' + respons)
                     speak.say(respons)
+                    reqs.post(update_command_url + 'Marvin' + '/' + respons)
 
 
 class Config_data(BaseModel):
@@ -228,7 +232,6 @@ def show_spinining_icon(request: Request):
 @app.post("/update_command/{speaker}/{content}")
 def update_command(request: Request, speaker:str, content:str):
     global marvin_command
-    print("callllled", speaker, content)
     if speaker and content:
         marvin_command = {'content': {'speaker': speaker, 'content': content}}
 
