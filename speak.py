@@ -1,4 +1,3 @@
-
 from gtts import gTTS
 import playsound
 from io import BytesIO
@@ -11,7 +10,7 @@ def say(sentence):
     pygame.init()
     pygame.mixer.init()
     mp3_fp = BytesIO()
-    tts = gTTS(text=sentence, lang="en", slow=False)
+    tts = gTTS(text=sentence, lang="en", slow=True)
     tts.write_to_fp(mp3_fp)
     pygame.mixer.music.load(mp3_fp, 'mp3')
     pygame.mixer.music.play()
