@@ -55,7 +55,7 @@ Output:
 
 
 answer_question = """
-Answer the question, be very short and use simple words:
+Answer the question, be very short and use simple words, never answer with another question, just answer:
 
 Question: {user_input}
 Answer:
